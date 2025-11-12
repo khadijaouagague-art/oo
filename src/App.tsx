@@ -1,63 +1,13 @@
-import { Building2, Globe, Shield, Zap, CheckCircle, ArrowRight, Menu, X, Moon, Sun, MessageCircle, Send } from 'lucide-react';
+import { Building2, Globe, Shield, Zap, CheckCircle, ArrowRight, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ContactForm from './components/ContactForm';
 import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
 import TrustBadges from './components/TrustBadges';
-import LLCForm from './components/LLCForm';
-import Navbar from './components/Navbar';
-import ChatBot from './components/ChatBot';
 
-type Language = 'en' | 'fr';
-type Theme = 'light' | 'dark';
-
-const translations = {
-  en: {
-    services: 'Services',
-    benefits: 'Benefits',
-    process: 'Process',
-    contact: 'Contact',
-    getStarted: 'Get Started',
-    startLLC: 'Start Your LLC',
-    learnMore: 'Learn More',
-  },
-  fr: {
-    services: 'Services',
-    benefits: 'Avantages',
-    process: 'Processus',
-    contact: 'Contact',
-    getStarted: 'Commencer',
-    startLLC: 'Démarrer votre LLC',
-    learnMore: 'En savoir plus',
-  }
-};
-
-function HomePage() {
+function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [language, setLanguage] = useState<Language>('en');
-  const [theme, setTheme] = useState<Theme>('light');
-
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language || 'en';
-    const savedTheme = localStorage.getItem('theme') as Theme || 'light';
-    setLanguage(savedLanguage);
-    setTheme(savedTheme);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,19 +17,74 @@ function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const t = translations[language];
-
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-      <Navbar
-        isScrolled={isScrolled}
-        mobileMenuOpen={mobileMenuOpen}
-        setMobileMenuOpen={setMobileMenuOpen}
-        language={language}
-        setLanguage={setLanguage}
-        theme={theme}
-        setTheme={setTheme}
-      />
+    <div className="min-h-screen bg-white">
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center space-x-2 animate-fade-in">
+              <Building2 className={`h-8 w-8 transition-colors duration-300 ${
+                isScrolled ? 'text-blue-600' : 'text-white'
+              }`} />
+              <span className={`text-2xl font-bold transition-colors duration-300 ${
+                isScrolled ? 'text-gray-900' : 'text-white'
+              }`}>
+                OGS Solution
+              </span>
+            </div>
+
+            <div className="hidden md:flex items-center space-x-8">
+              {['Services', 'Benefits', 'Process', 'Contact'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className={`relative transition-colors duration-300 hover:text-blue-600 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-blue-600 after:left-0 after:-bottom-1 after:transition-all after:duration-300 hover:after:w-full ${
+                    isScrolled ? 'text-gray-700' : 'text-white after:bg-white hover:after:bg-blue-600'
+                  }`}
+                >
+                  {item}
+                </a>
+              ))}
+              <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/50 hover:scale-105 active:scale-95">
+                Get Started
+              </button>
+            </div>
+
+            <button
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className={isScrolled ? 'text-gray-900' : 'text-white'} />
+              ) : (
+                <Menu className={isScrolled ? 'text-gray-900' : 'text-white'} />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t animate-slide-down">
+            <div className="px-4 py-4 space-y-4">
+              {['Services', 'Benefits', 'Process', 'Contact'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className="block text-gray-700 hover:text-blue-600 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item}
+                </a>
+              ))}
+              <button className="w-full bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-all">
+                Get Started
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
 
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900">
         <div className="absolute inset-0 opacity-10">
@@ -90,28 +95,26 @@ function HomePage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in-up">
-            {language === 'en' ? 'Launch Your US LLC' : 'Lancez votre LLC américaine'}
+            Launch Your US LLC
             <br />
-            <span className="text-blue-200">{language === 'en' ? 'in 48 Hours' : 'en 48 heures'}</span>
+            <span className="text-blue-200">in 48 Hours</span>
           </h1>
           <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto animate-fade-in-up animation-delay-200">
-            {language === 'en'
-              ? 'Fast, reliable, and hassle-free LLC formation for entrepreneurs worldwide. Start your American business today.'
-              : 'Formation de LLC rapide, fiable et sans tracas pour les entrepreneurs du monde entier. Commencez votre entreprise américaine aujourd\'hui.'}
+            Fast, reliable, and hassle-free LLC formation for entrepreneurs worldwide. Start your American business today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-400">
             <a
-              href="/apply"
+              href="#contact"
               className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center space-x-2 group"
             >
-              <span>{t.startLLC}</span>
+              <span>Start Your LLC</span>
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
             </a>
             <a
               href="#services"
               className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 hover:scale-105 active:scale-95"
             >
-              {t.learnMore}
+              Learn More
             </a>
           </div>
 
@@ -234,10 +237,10 @@ function HomePage() {
                     </div>
                   </div>
                   <a
-                    href="/apply"
+                    href="#contact"
                     className="block w-full bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                   >
-                    {language === 'en' ? 'Get Started Now' : 'Commencer Maintenant'}
+                    Get Started Now
                   </a>
                 </div>
               </div>
@@ -319,28 +322,41 @@ function HomePage() {
                 <Building2 className="h-6 w-6 text-blue-500" />
                 <span className="text-white font-bold text-lg">OGS Solution</span>
               </div>
-              <p className="text-sm">{language === 'en' ? 'Your trusted partner for US LLC formation worldwide.' : 'Votre partenaire de confiance pour la formation de LLC américaine dans le monde.'}</p>
+              <p className="text-sm">Your trusted partner for US LLC formation worldwide.</p>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-4">Services</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">LLC Formation</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">EIN Application</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">Registered Agent</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">Bank Account</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">About Us</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">FAQ</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">Blog</a></li>
+                <li><a href="#contact" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">Terms of Service</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-1 transition-all duration-300 inline-block">Refund Policy</a></li>
+              </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>&copy; 2025 OGS Solution. {language === 'en' ? 'All rights reserved.' : 'Tous droits réservés.'}</p>
+            <p>&copy; 2025 OGS Solution. All rights reserved.</p>
           </div>
         </div>
       </footer>
-
-      <ChatBot language={language} />
     </div>
-  );
-}
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/apply" element={<LLCForm />} />
-      </Routes>
-    </BrowserRouter>
   );
 }
 
